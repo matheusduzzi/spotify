@@ -1,0 +1,61 @@
+---
+title: "Análise Spotify"
+output:
+  pdf_document: default
+---
+
+```{python}
+
+```
+
+
+```{r,warning=FALSE}
+library(readr)
+playlist <- read_csv("topcharts-18P7DfWvx1bqeppz8UN8JZ.csv")
+playlist <- unique(playlist)
+```
+
+
+```{r}
+library(ggplot2)
+ggplot(playlist, aes(x = danceability, y = name_track)) + 
+  geom_bar(stat = "identity", fill = "#F59B23") +
+  labs(x = "", y = "") +
+  theme_void() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1 , hjust = 1), 
+        axis.line = element_line(colour = "grey80"), axis.ticks = element_line(colour = "grey80"), 
+        axis.title = element_text(size = 8, face = "bold"), axis.text = element_text(size = 8),
+        legend.position = "bottom",legend.margin = margin(t=0.5))
+```
+
+```{r}
+sucess = c()
+sucess[1:nrow(playlist)] = 1
+playlist <- cbind(playlist$acousticness,sucess)
+```
+
+```{r}
+mplaylist <- read_csv("C:/Users/mathe/Downloads/Matheus Duzzi-1mXd3EuoiLw97KjepggKrt.csv")
+mplaylist <- unique(mplaylist)
+mplaylist <- mplaylist[1:43,]
+sucess = c()
+sucess[1:nrow(mplaylist)] = 0
+mplaylist <- cbind(mplaylist$acousticness,sucess)
+pltog <- as.data.frame(rbind(playlist,mplaylist)) 
+```
+
+```{r}
+plmodel <- glm(sucess ~ V1, data = pltog, family = binomial(link = "logit"))
+```
+
+```{r}
+media = data.frame(V1=0.714)
+media$pred.prob = predict(plmodel, newdata=media, type="response")
+```
+
+
+
+
+
+
+
